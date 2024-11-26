@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net"
 	"time"
-	"path/filepath"
+//	"path/filepath"
 	_ "embed"
 
 	"codeberg.org/Kaamkiya/sshout/internal/pkg/auth"
@@ -39,7 +39,6 @@ func Run() {
 		}),
 		wish.WithIdleTimeout(15 * time.Minute),
 		wish.WithAddress(hostAddr),
-		wish.WithHostKeyPath(filepath.Join(".ssh", "id_ed25519.pub")),
 		wish.WithMiddleware(
 			func(next ssh.Handler) ssh.Handler {
 				return func(sess ssh.Session) {
