@@ -1,0 +1,55 @@
+sshout
+======
+
+How it'll work
+==============
+Users can connect with their username/password.
+The server will host an SQLite database with all messages. Once connected,
+users are put in the #main channel by default. To switch channels, they can
+type /chan [channel]. If the channel doesn't exist, it will be created.
+
+Users' prompt will use this format:
+	[user in #channel]:
+
+List of commands
+----------------
+/chan [channel]       Switch to a channel. Channels will be created if they don't
+                      already exist.
+/help                 Print some helpful information.
+/users                List all users.
+/theme [theme]        Change color scheme.
+/pronouns [pronouns]  Set your pronouns.
+/bio [bio]            A short biography about yourself.
+/exit                 Leave the chat.
+/whois [user]         Get information about another user (pronouns, bio).
+/kick [user]          (Admin) kill a user's SSH session.
+
+pseudocode
+----------
+
+	import ssh, wish, fmt, slog
+
+	srv = wish.newserver
+		withaddress     localhost:2222
+		withbanner      sshout (figlet)
+		withidletimeout 300 sec
+		withpasswdauth  func(p passwdauthhandler) ->
+					u = db.get(users where name = ctx.User)
+					if bcrypt.cmphashpasswd(u, p.entered)
+						return true
+					return false
+		withversion     const version
+		withmiddleware  chat // see below
+
+	srv.serve()
+
+	middleware chat = newmiddleware ->
+		input = readline
+		if input.split[0] in commands
+			execCommand
+		else
+			sendMsg input
+
+License
+=======
+This project uses the Unlicense. See https://unlicense.org for more info.
